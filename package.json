@@ -1,0 +1,29 @@
+{
+  "name": "api-design-talk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "inspect": "SPEECHDECK_INSPECT=1 vite",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@speechdeck/core": "jsr:^0.0.1",
+    "@speechdeck/solid": "jsr:^0.0.1",
+    "@speechdeck/themes": "jsr:^0.0.1",
+    "solid-js": "^1.9.15"
+  },
+  "devDependencies": {
+    "@speechdeck/vite": "jsr:^0.0.1",
+    "@types/node": "^26.4.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "intent": {
+    "skills": [
+      "@speechdeck/*"
+    ]
+  }
+}

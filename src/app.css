@@ -1,0 +1,229 @@
+/* App CSS.
+ *
+ * @speechdeck/solid's style.css paints a Slide (.slide, .cells, .cell, Marks, Looks) and
+ * the Inspect readout, but ships nothing for the Present / Rehearse compositions —
+ * .present, .rehearse, .speech, .rail and the .preview-* rail have no rules, and nothing
+ * gives the page a height. Without the rules below, .present collapses to the height of
+ * its text and renderPreview's fit() sees a zero-height .preview-frame, bails before
+ * setting a scale, and each preview paints at its raw 1280x720.
+ * https://github.com/MichaelBuss/speechdeck/issues/82
+ */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  /* Speech scrolls inside .speech and a Slide never scrolls (Refuse, not scroll), so the
+   * page itself has nothing to reveal. */
+  overflow: hidden;
+}
+
+#app {
+  height: 100%;
+}
+
+.present,
+.rehearse {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: 1.5rem;
+  height: 100%;
+  padding: 1.5rem;
+  background: #14110e;
+  color: #efe9e1;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Speech is the primary surface (CONTEXT.md): it gets the room, and overflows by
+ * scrolling — the inline `overflow-y: auto` the composition sets needs a bounded
+ * parent to act on. */
+.speech {
+  min-width: 0;
+  min-height: 0;
+  font-size: clamp(1.1rem, 1.6cqi, 1.9rem);
+  line-height: 1.55;
+}
+
+.speech > p:first-child {
+  margin-top: 0;
+}
+
+.rail {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.open-audience,
+.clock {
+  border: 1px solid #efe9e133;
+  border-radius: 0.4rem;
+  background: #efe9e10f;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.clock {
+  font-variant-numeric: tabular-nums;
+}
+
+.preview {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.preview-tag {
+  color: #efe9e199;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* fit() reads clientWidth/clientHeight off .preview-frame, so the frame — not the
+ * scaled stage — is what has to carry a size. 16:9 matches the default preview
+ * viewport, so the letterboxing is nil. */
+.preview-frame {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid #efe9e11f;
+  border-radius: 0.4rem;
+}
+
+.preview-sizer {
+  position: relative;
+}
+
+.preview-end {
+  margin: 0;
+  color: #efe9e166;
+}
+
+/* The audience composition is a bare .slide mounted straight into #app, with no chrome.
+ * Nothing in the engine CSS gives it a size, so without this the projector paints a
+ * zero-height Slide. */
+#app > .slide {
+  width: 100%;
+  height: 100%;
+}
+
+.inspect {
+  box-sizing: border-box;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #14110e;
+  color: #efe9e1;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.inspect-stage {
+  border: 1px solid #efe9e11f;
+}
+
+.inspect-readout {
+  align-content: start;
+}
+
+/* Type scale.
+ *
+ * The engine CSS sets --sd-font-* families and the Theme's colours but no sizes, and the
+ * built-in Themes ship only theme.json, so audience text otherwise paints at the
+ * browser's defaults — a 32px h1 and 16px body on a 1920px projector. `.slide` is a size
+ * container (container-name: slide), so every size below is relative to the Slide it
+ * lands on, which is what makes a preview scale down truthfully.
+ * https://github.com/MichaelBuss/speechdeck/issues/83 */
+.slide :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.slide h1 {
+  font-size: min(9cqi, 15cqb);
+}
+
+.slide h2 {
+  font-size: min(6cqi, 10cqb);
+}
+
+.slide h3 {
+  font-size: min(4.4cqi, 7.5cqb);
+}
+
+.slide h4 {
+  font-size: min(3.2cqi, 5.5cqb);
+}
+
+.slide :is(p, li) {
+  font-size: min(2.9cqi, 5cqb);
+  line-height: 1.4;
+}
+
+.slide :is(ul, ol) {
+  margin: 0;
+  padding-inline-start: 1.2em;
+  display: grid;
+  gap: 0.5em;
+  text-align: start;
+}
+
+.slide blockquote {
+  margin: 0;
+  font-style: italic;
+}
+
+.cell[data-kind="code"] pre {
+  margin: 0;
+  overflow: hidden;
+  font-size: min(1.9cqi, 3.3cqb);
+  line-height: 1.5;
+}
+
+.slide code {
+  font-family: var(--sd-font-mono);
+}
+
+/* An Embed's host element is the guest's to fill — the framework only hands it over, so
+ * every rule below is this repo styling its own guest in demos/endpoint.ts. */
+.embed {
+  display: grid;
+  gap: 0.8em;
+  place-content: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: min(2.2cqi, 3.8cqb);
+}
+
+.embed code,
+.embed pre {
+  margin: 0;
+  font-family: var(--sd-font-mono);
+  font-size: inherit;
+}
+
+.embed pre {
+  border-radius: 0.3em;
+  background: #0003;
+  padding: 0.7em 1em;
+  text-align: start;
+  line-height: 1.4;
+}
+
+.embed button {
+  border: 1px solid currentColor;
+  border-radius: 0.3em;
+  background: none;
+  color: inherit;
+  padding: 0.4em 0.9em;
+  font: inherit;
+  cursor: pointer;
+}

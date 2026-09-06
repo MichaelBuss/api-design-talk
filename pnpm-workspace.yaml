@@ -1,0 +1,5 @@
+minimumReleaseAgeExclude:
+  - '@jsr/speechdeck__core@0.0.1'
+  - '@jsr/speechdeck__solid@0.0.1'
+  - '@jsr/speechdeck__themes@0.0.1'
+  - '@jsr/speechdeck__vite@0.0.1'
